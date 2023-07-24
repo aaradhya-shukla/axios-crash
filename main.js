@@ -1,31 +1,55 @@
 // GET REQUEST
 function getTodos() {
-  console.log('GET Request');
+  axios('https://jsonplaceholder.typicode.com/todos?_limit=5').then((value)=>showOutput(value)).catch((err)=>console.error(err));
 }
 
 // POST REQUEST
 function addTodo() {
-  console.log('POST Request');
+  axios.post('https://jsonplaceholder.typicode.com/todos?_limit=5',{
+    title:'new data',
+    completed:false
+  }).then((value)=>showOutput(value)).catch((err)=>console.error(err));
 }
 
 // PUT/PATCH REQUEST
 function updateTodo() {
-  console.log('PUT/PATCH Request');
+  axios.patch('https://jsonplaceholder.typicode.com/todos/1',{
+    title:'updated data',
+    completed:true
+  }).then((value)=>showOutput(value)).catch((err)=>console.error(err));
 }
 
 // DELETE REQUEST
 function removeTodo() {
-  console.log('DELETE Request');
+  axios.delete('https://jsonplaceholder.typicode.com/todos/1').then((value)=>showOutput(value)).catch((err)=>console.error(err));
 }
 
 // SIMULTANEOUS DATA
 function getData() {
-  console.log('Simultaneous Request');
+  axios.all([
+    axios.get('https://jsonplaceholder.typicode.com/todos'),
+    axios.get('https://jsonplaceholder.typicode.com/posts')
+  ]).then(axios.spread((todos,posts)=>{
+    console.log(todos);
+    console.log(posts),
+    showOutput(posts);
+  }))
 }
 
 // CUSTOM HEADERS
 function customHeaders() {
-  console.log('Custom Headers');
+  const config={
+    headers:{
+      'Content-Type':'application/json',
+      Authorization:'sometoken'
+    }
+  }
+axios.post('https://jsonplaceholder.typicode.com/todos?_limit=5',
+{
+  title:'New todo',
+  completed:false,
+  
+},config).then((value)=>showOutput(value)).catch((err)=>console.error(err));
 }
 
 // TRANSFORMING REQUESTS & RESPONSES
@@ -44,6 +68,19 @@ function cancelToken() {
 }
 
 // INTERCEPTING REQUESTS & RESPONSES
+
+axios.interceptors.request.use(
+  config=>{
+    console.log(
+      `${config.method.toUpperCase()} request sent to ${config.url} at ${new Date().getTime()}`
+    );
+    return config;
+  },
+  error=>{
+    return Promise.reject(error);
+  }
+  
+)
 
 // AXIOS INSTANCES
 
